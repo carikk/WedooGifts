@@ -41,20 +41,4 @@ public class Company {
         this.balance = balance;
     }
 
-    public String distributeGiftCardToUser(User user, GiftCard giftCard) {
-        if (this.balance > giftCard.getAmountOfGift()) {
-            List userGiftCards = user.getAccount().getGiftCards();
-            if (userGiftCards != null) {
-                userGiftCards.add(giftCard);
-            } else {
-                userGiftCards = new ArrayList<>(Arrays.asList(giftCard));
-            }
-            this.balance -= giftCard.getAmountOfGift();
-            user.getAccount().setGiftCards(userGiftCards);
-        } else {
-            return "The company cannot afford That !";
-        }
-        return "Successfully distributed !";
-    }
-
 }

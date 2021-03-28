@@ -2,6 +2,8 @@ import Entities.Account;
 import Entities.Company;
 import Entities.GiftCard;
 import Entities.User;
+import Services.CompanyService;
+import Services.UserService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,8 +15,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CompanyTest {
+public class Level1Test {
 
+
+    private UserService userService = new UserService();
+
+    private CompanyService companyService = new CompanyService();
 
     @Test
     public void successfullDistribution() {
@@ -25,12 +31,12 @@ public class CompanyTest {
         String returnMessage;
 
         // When
-        returnMessage = company.distributeGiftCardToUser(userA ,giftCard);
+        returnMessage = companyService.distributeGiftCardToUser(company, userA ,giftCard);
 
         // Then
         Assert.assertEquals("Successfully distributed !", returnMessage);
         Assert.assertEquals(900, company.getBalance());
-        Assert.assertEquals(100, userA.calculateUserBalance());
+        Assert.assertEquals(100, userService.calculateUserBalance(userA));
     }
 
     @Test
@@ -42,53 +48,49 @@ public class CompanyTest {
         String returnMessage;
 
         // When
-        returnMessage = company.distributeGiftCardToUser(userA ,giftCard);
+        returnMessage = companyService.distributeGiftCardToUser(company, userA ,giftCard);
 
         // Then
         Assert.assertEquals("The company cannot afford That !", returnMessage);
         Assert.assertEquals(50, company.getBalance());
-        Assert.assertEquals(0, userA.calculateUserBalance());
+        Assert.assertEquals(0, userService.calculateUserBalance(userA));
     }
 
     @Test
-    public void calculateUserBalanceForValideTickets() {
+    public void calculateUserBalanceForValideGiftCards() {
         // Given
         User userA = new User(new Account());
         Company company = new Company("Wedoogift", 1000, new ArrayList<>(Arrays.asList(userA)));
         GiftCard giftCard1 = new GiftCard(LocalDate.now(), 100);
         GiftCard giftCard2 = new GiftCard(LocalDate.now(), 200);
         GiftCard giftCard3 = new GiftCard(LocalDate.now(), 150);
-        String returnMessage;
 
         // When
-        company.distributeGiftCardToUser(userA ,giftCard1);
-        company.distributeGiftCardToUser(userA ,giftCard2);
-        company.distributeGiftCardToUser(userA ,giftCard3);
+        companyService.distributeGiftCardToUser(company, userA ,giftCard1);
+        companyService.distributeGiftCardToUser(company, userA ,giftCard2);
+        companyService.distributeGiftCardToUser(company, userA ,giftCard3);
 
         // Then
-        Assert.assertEquals(450, userA.calculateUserBalance());
+        Assert.assertEquals(450, userService.calculateUserBalance(userA));
         Assert.assertEquals(550, company.getBalance());
-
     }
 
     @Test
-    public void calculateUserBalanceForInvalideTickets() {
+    public void calculateUserBalanceForInvalideGiftCards() {
         // Given
         User userA = new User(new Account());
         Company company = new Company("Wedoogift", 500, new ArrayList<>(Arrays.asList(userA)));
         GiftCard giftCard1 = new GiftCard(LocalDate.now(), 100);
         GiftCard giftCard2 = new GiftCard(LocalDate.of(2020, Month.MARCH, 8), 200);
         GiftCard giftCard3 = new GiftCard(LocalDate.now(), 150);
-        String returnMessage;
 
         // When
-        company.distributeGiftCardToUser(userA ,giftCard1);
-        company.distributeGiftCardToUser(userA ,giftCard2);
-        company.distributeGiftCardToUser(userA ,giftCard3);
+        companyService.distributeGiftCardToUser(company, userA ,giftCard1);
+        companyService.distributeGiftCardToUser(company, userA ,giftCard2);
+        companyService.distributeGiftCardToUser(company, userA ,giftCard3);
 
         // Then
-        Assert.assertEquals(250, userA.calculateUserBalance());
+        Assert.assertEquals(250, userService.calculateUserBalance(userA));
         Assert.assertEquals(50, company.getBalance());
-
     }
 }
